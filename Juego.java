@@ -145,7 +145,7 @@ public class Juego
      *    bazas) o "no es julepe".
      *
      */
-    public void jugar()
+    private void jugar()
     {
         repartir();
         Scanner entrada = new Scanner(System.in);
