@@ -108,7 +108,17 @@ public class Juego
      */
     private int encontrarPosicionJugadorPorNombre(String nombre)
     {
-        
+        int posicionDelJugador = -1;
+        int contador = 0;
+        boolean buscando = true;
+        while (contador < jugadores.length && buscando) {
+            if (jugadores[contador].getNombre().equals(nombre)) {
+                buscando = false;
+                posicionDelJugador = contador;
+            }
+            contador++;
+        }
+        return posicionDelJugador;
     }
     
         
@@ -135,10 +145,54 @@ public class Juego
      *    bazas) o "no es julepe".
      *
      */
-    private void jugar()
+    public void jugar()
     {
-
-        
+        repartir();
+        Scanner entrada = new Scanner(System.in);
+        boolean cartaTirada = false;
+        int contadorLento = 0;
+        while (contadorLento < 5) {
+            Baza baza = new Baza(jugadores.length, paloQuePinta);
+            while (!cartaTirada) {
+                System.out.println("");
+                jugadores[0].verCartasJugador();
+                System.out.println("");
+                System.out.println("¿Que carta quieres tirar?");
+                System.out.println("");
+                String nombreCartaATirar = entrada.nextLine();
+                System.out.println("");
+                Carta cartaActual = jugadores[0].tirarCarta(nombreCartaATirar);
+                if (cartaActual != null) {
+                    baza.addCarta(cartaActual, jugadores[0].getNombre());
+                    cartaTirada = true;
+                }
+                else {
+                    System.out.println("");
+                    System.out.println("No tienes esa carta, por favor tira una carta de la que dispongas");
+                    System.out.println("");
+                }
+            }
+            int contador = 1;
+            while (contador < jugadores.length) {
+                baza.addCarta(jugadores[contador].tirarCartaInteligentemente(baza.getPaloPrimeraCartaDeLaBaza(), baza.cartaQueVaGanandoLaBaza(), paloQuePinta), jugadores[contador].getNombre());
+                contador++;
+            }
+            jugadores[encontrarPosicionJugadorPorNombre(baza.nombreJugadorQueVaGanandoLaBaza())].addBaza(baza);
+            System.out.println("El jugador " + baza.nombreJugadorQueVaGanandoLaBaza() + " ha ganado esta baza.");
+            contadorLento++;
+            cartaTirada = false;
+        }
+        System.out.println("El jugador " + jugadores[0].getNombre() + " ha ganado " + jugadores[0].getNumeroBazasGanadas() + " bazas.");
+        if (jugadores[0].getNumeroBazasGanadas() < 2) {
+            System.out.println("");
+            System.out.println("El jugador " + jugadores[0].getNombre() + " es julepe.");
+            System.out.println("");
+        }
+        else {
+            System.out.println("");
+            System.out.println("El jugador " + jugadores[0].getNombre() + " no es julepe.");
+            System.out.println(""); 
+        }
     }    
 }
 
